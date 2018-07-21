@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     fun stoprec(){
-        try {
+        try { 
             mediaRecorder.stop()
             mediaRecorder.release()
             playrec()
