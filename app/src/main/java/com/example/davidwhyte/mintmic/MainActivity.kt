@@ -13,6 +13,7 @@ import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.util.Log
 import android.widget.ImageButton
+import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.jar.Manifest
@@ -23,12 +24,17 @@ class MainActivity : AppCompatActivity() {
     private val WRITE_REQUEST_CODE=2930
     val mediaRecorder=MediaRecorder()
     val mediaPlayer=MediaPlayer()
-    var FILE_REC=Environment.getExternalStorageDirectory().absolutePath+"/recorder.aac"
+//    var FILE_REC=Environment.getExternalStorageDirectory().absolutePath+"/MintMic/recorder"+n+".aac"
+    val dir=Environment.getExternalStorageDirectory().absolutePath+"/MintMic"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val record=findViewById<ImageButton>(R.id.record)
+
+        if(!File(dir).exists()){
+            File(dir).mkdir()
+        }
         record.setOnClickListener {
             if(state==0){
                 state=1
@@ -55,10 +61,10 @@ class MainActivity : AppCompatActivity() {
         }
         else{
             var mFileName="filearma"
-
+            var n=File(dir).walkTopDown().count()
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
             mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)
-            mediaRecorder.setOutputFile(FILE_REC);
+            mediaRecorder.setOutputFile(dir+"/record"+n+".aac");
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
             mediaRecorder.setAudioSamplingRate(16000)
             try {
@@ -70,10 +76,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
     fun stoprec(){
-        try { 
+        try {
             mediaRecorder.stop()
             mediaRecorder.release()
-            playrec()
+//            playrec()
         }catch (e:IOException){
             e.printStackTrace()
         }
@@ -82,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
     fun playrec(){
         try {
-            mediaPlayer.setDataSource(FILE_REC)
+            mediaPlayer.setDataSource(dir)
             mediaPlayer.prepare()
             mediaPlayer.start()
         }catch (e:IOException){
