@@ -11,13 +11,13 @@ object RecordContract {
         const val TABLE_NAME = "records"
         const val COLUMN_NAME_NAME = "name"
         const val COLUMN_NAME_Date = "date"
-        const val COLUMN_NAME_DURATION="duration"
+        const val COLUMN_NAME_SIZE="duration"
         private const val SQL_CREATE_ENTRIES =
                 "CREATE TABLE ${RecordContract.RecordEntry.TABLE_NAME} (" +
                         "${BaseColumns._ID} INTEGER PRIMARY KEY," +
                         "${RecordContract.RecordEntry.COLUMN_NAME_NAME} TEXT," +
                         "${RecordContract.RecordEntry.COLUMN_NAME_Date} TEXT," +
-                        "${RecordContract.RecordEntry.COLUMN_NAME_DURATION} TEXT)"
+                        "${RecordContract.RecordEntry.COLUMN_NAME_SIZE} TEXT)"
 
         private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${RecordContract.RecordEntry.TABLE_NAME}"
 

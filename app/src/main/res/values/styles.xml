@@ -8,6 +8,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="RecName">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">25dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+    <style name="recDate">
+        <item name="android:textSize">18dp</item>
+        <!--<item name="android:paddingLeft">80dp</item>-->
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:textAlignment">viewEnd</item>
+    </style>
+    <style name="Recsize">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
     <style name="tm_text">
        <item name="android:color">#FFFCFAF9</item>
         <item name="android:textSize">60dp</item>

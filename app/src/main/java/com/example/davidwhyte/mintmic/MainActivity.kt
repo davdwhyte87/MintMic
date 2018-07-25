@@ -1,6 +1,7 @@
 package com.example.davidwhyte.mintmic
 
 import android.content.ContentValues
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.media.MediaFormat
@@ -10,6 +11,8 @@ import android.os.*
 import android.provider.BaseColumns
 import android.support.v7.app.AppCompatActivity
 import android.support.v4.app.ActivityCompat
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
@@ -21,6 +24,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
 import java.util.jar.Manifest
+import kotlin.collections.ArrayList
 import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
@@ -37,9 +41,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //list button handler
+        val listbtn=findViewById<ImageButton>(R.id.record_list)
+        listbtn.setOnClickListener {
+            val intent=Intent(this,RecordsActivity::class.java)
+            startActivity(intent)
+        }
+        //record button handler
         val record=findViewById<ImageButton>(R.id.record)
         getData()
-        getDB()
         timer=timer()
         if(!File(dir).exists()){
             File(dir).mkdir()
@@ -57,6 +68,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
     fun timer():CountDownTimer{
         val minute:Long=1000*60
         val future:Long=(minute * 1440) + (minute * 155) + (1000 * 50)
@@ -135,40 +148,13 @@ class MainActivity : AppCompatActivity() {
         val currentDate = sdf.format(Date())
         val dbHelper=RecordContract.RecordEntry.RecordDbHelper(this)
         val db=dbHelper.writableDatabase
+        val size=File(FILE_REC).length()
         val vals=ContentValues().apply {
             put(RecordContract.RecordEntry.COLUMN_NAME_NAME,FILE_REC)
-            put(RecordContract.RecordEntry.COLUMN_NAME_DURATION,tmSum)
+            put(RecordContract.RecordEntry.COLUMN_NAME_SIZE,size.toString())
             put(RecordContract.RecordEntry.COLUMN_NAME_Date,currentDate)
         }
         val newRowId=db?.insert(RecordContract.RecordEntry.TABLE_NAME,null,vals)
-    }
-
-    fun getDB(){
-        val dbHelper=RecordContract.RecordEntry.RecordDbHelper(this)
-        val db=dbHelper.readableDatabase
-        val projection= arrayOf(BaseColumns._ID,
-                RecordContract.RecordEntry.COLUMN_NAME_NAME,
-                RecordContract.RecordEntry.COLUMN_NAME_DURATION,
-                RecordContract.RecordEntry.COLUMN_NAME_Date
-        )
-//        val selection="${RecordContract.RecordEntry.TABLE_NAME}"
-        val cursor=db.query(RecordContract.RecordEntry.TABLE_NAME,projection,null,null,null,null,null)
-        with(cursor){
-            while (moveToNext()){
-                val name=getString(getColumnIndex(RecordContract.RecordEntry.COLUMN_NAME_NAME))
-                val date=getString(getColumnIndex(RecordContract.RecordEntry.COLUMN_NAME_Date))
-                val duration=getString(getColumnIndex(RecordContract.RecordEntry.COLUMN_NAME_DURATION))
-                val id=getInt(getColumnIndex(BaseColumns._ID))
-                val record=Record()
-                record.id=id.toString()
-                record.name=name
-                record.date=date
-                record.duration=duration
-                Log.v("note id",record.name.toString())
-
-            }
-        }
-
     }
 
     fun playrec(){
