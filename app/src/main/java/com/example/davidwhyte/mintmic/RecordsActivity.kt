@@ -38,7 +38,8 @@ class RecordsActivity : AppCompatActivity() {
         val projection= arrayOf(BaseColumns._ID,
                 RecordContract.RecordEntry.COLUMN_NAME_NAME,
                 RecordContract.RecordEntry.COLUMN_NAME_SIZE,
-                RecordContract.RecordEntry.COLUMN_NAME_Date
+                RecordContract.RecordEntry.COLUMN_NAME_Date,
+                RecordContract.RecordEntry.COLUMN_NAME_R_LINK
         )
 //        val selection="${RecordContract.RecordEntry.TABLE_NAME}"
         val cursor=db.query(RecordContract.RecordEntry.TABLE_NAME,projection,null,null,null,null,null)
@@ -47,12 +48,14 @@ class RecordsActivity : AppCompatActivity() {
                 val name=getString(getColumnIndex(RecordContract.RecordEntry.COLUMN_NAME_NAME))
                 val date=getString(getColumnIndex(RecordContract.RecordEntry.COLUMN_NAME_Date))
                 val size=getString(getColumnIndex(RecordContract.RecordEntry.COLUMN_NAME_SIZE))
+                val r_link=getString(getColumnIndex(RecordContract.RecordEntry.COLUMN_NAME_R_LINK))
                 val id=getInt(getColumnIndex(BaseColumns._ID))
                 val record= Record()
                 record.id=id.toString()
                 record.name=name
                 record.date=date
                 record.size=size
+                record.r_link=r_link
                 records.add(record)
                 Log.v("note id",record.name.toString())
 

@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     val mediaRecorder=MediaRecorder()
     val mediaPlayer=MediaPlayer()
     var FILE_REC=""
+    var REC_LINK=""
     var tmSum:Long=0
     var timer:CountDownTimer?=null
     val dir=Environment.getExternalStorageDirectory().absolutePath+"/MintMic"
@@ -58,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         record.setOnClickListener {
             if(state==0){
                 state=1
+                tmSum=0
                 record.setImageResource(R.drawable.stop)
                 record()
             }
@@ -75,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         val future:Long=(minute * 1440) + (minute * 155) + (1000 * 50)
         val interval:Long=1000
         var d_time=""
+
         val timer_view=findViewById<TextView>(R.id.timer_view)
         return object:CountDownTimer(future,interval){
             override fun onTick(p0: Long) {
@@ -87,45 +90,57 @@ class MainActivity : AppCompatActivity() {
                     //get how many minutes
                 }
             }
-
             override fun onFinish() {
                 timer_view.text=0.toString()
             }
         }
     }
-    fun record(){
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(WRITE_REQUEST_CODE==requestCode){
+            record()
+        }
+        if(RECORD_REQUEST_CODE==requestCode){
+            record()
+        }
+    }
+    fun record(){
         //reset the record button
         if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),WRITE_REQUEST_CODE)
         }
-        if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECORD_AUDIO),RECORD_REQUEST_CODE)
-        }
-
         else{
-            var n=File(dir).walkTopDown().count()
-            var mFileName=dir+"/record"+n+".aac"
-            FILE_REC=mFileName
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)
-            mediaRecorder.setOutputFile(mFileName);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-            mediaRecorder.setAudioSamplingRate(16000)
-            try {
-                mediaRecorder.prepare();
-                mediaRecorder.start();
-                timer?.start()
-            } catch (e:IOException) {
-                Log.e("LOG_TAG", "prepare() failed");
+            if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECORD_AUDIO),RECORD_REQUEST_CODE)
+            }
+            else{
+                var n=File(dir).walkTopDown().count()
+                var name="record"+n+".aac"
+                var mFileName=dir+"/"+name
+                FILE_REC=name
+                REC_LINK=mFileName
+                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)
+                mediaRecorder.setOutputFile(mFileName)
+                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT)
+                mediaRecorder.setAudioSamplingRate(2500)
+                try {
+                    mediaRecorder.prepare()
+                    mediaRecorder.start()
+                    timer?.start()
+                } catch (e:IOException) {
+                    Log.e("LOG_TAG", "prepare() failed");
+                }
             }
         }
+
     }
     fun stoprec(){
         try {
             mediaRecorder.stop()
+//            mediaRecorder.release()
             timer?.cancel()
-            mediaRecorder.release()
             saveData()
             Toast.makeText(this,"Record saved",Toast.LENGTH_SHORT).show()
 //            playrec()
@@ -153,6 +168,7 @@ class MainActivity : AppCompatActivity() {
             put(RecordContract.RecordEntry.COLUMN_NAME_NAME,FILE_REC)
             put(RecordContract.RecordEntry.COLUMN_NAME_SIZE,size.toString())
             put(RecordContract.RecordEntry.COLUMN_NAME_Date,currentDate)
+            put(RecordContract.RecordEntry.COLUMN_NAME_R_LINK,REC_LINK)
         }
         val newRowId=db?.insert(RecordContract.RecordEntry.TABLE_NAME,null,vals)
     }

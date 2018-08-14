@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.example.davidwhyte.mintmic.Model.Record
+import com.example.davidwhyte.mintmic.Utlis.Media
 import kotlinx.android.synthetic.main.record_list.view.*
 
 class RecordAdapter(val items:ArrayList<Record>, val context:Context ):RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
@@ -22,7 +23,17 @@ class RecordAdapter(val items:ArrayList<Record>, val context:Context ):RecyclerV
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.view.record_name.text=items[position].name
         holder.view.size.text=items[position].name
-        holder.view.record_date.text=items[position].date
+//        holder.view.record_date.text=items[position].date
+        //playbtn onclick listener
+        holder.view.play_btn.setOnClickListener {
+            var mmedia=Media()
+            mmedia.playrec(items[position].r_link)
+            val kk=it
+            mmedia.mediaPlayer.setOnCompletionListener {
+                kk.play_btn.setImageResource(R.drawable.stop)
+            }
+
+        }
     }
     class ViewHolder(val view:View) : RecyclerView.ViewHolder(view)
 }

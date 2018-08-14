@@ -5,5 +5,6 @@ class Record {
     var date=""
     var size=""
     var id=""
+    var r_link=""
 
 }
