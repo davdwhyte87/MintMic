@@ -29,8 +29,12 @@ class RecordAdapter(val items:ArrayList<Record>, val context:Context ):RecyclerV
             var mmedia=Media()
             mmedia.playrec(items[position].r_link)
             val kk=it
+            kk.play_btn.setImageResource(R.drawable.stop)
+            if (mmedia.mediaPlayer.isPlaying){
+                kk.play_btn.setImageResource(R.drawable.play)
+            }
             mmedia.mediaPlayer.setOnCompletionListener {
-                kk.play_btn.setImageResource(R.drawable.stop)
+                kk.play_btn.setImageResource(R.drawable.play)
             }
 
         }
